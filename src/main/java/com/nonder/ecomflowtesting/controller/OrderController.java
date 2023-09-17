@@ -3,6 +3,7 @@ package com.nonder.ecomflowtesting.controller;
 import com.nonder.ecomflowtesting.model.Order;
 import com.nonder.ecomflowtesting.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,7 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public Order createOrder(@RequestBody Order order) {
+    public ResponseEntity createOrder(@RequestBody Order order) {
         return orderService.createOrder(order);
     }
 }

@@ -5,7 +5,10 @@ import com.nonder.ecomflowtesting.model.Order;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
 
 @Service
 public class OrderService {
@@ -22,12 +25,12 @@ public class OrderService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public Order createOrder(Order order) {
+    public ResponseEntity createOrder(Order order) {
         boolean inventoryAvailable = checkInventory(order);
 
         if (inventoryAvailable) {
             placeOrderInQueue(order);
-            return order;
+            return ResponseEntity.created(URI.create(order.getId().toString())).build();
         } else {
             throw new RuntimeException("Order cannot be placed due to insufficient inventory.");
         }
