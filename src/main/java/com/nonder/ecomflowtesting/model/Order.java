@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Data
 public class Order implements Serializable {
 
-    private Long id;
+    private int id;
     private String itemName;
     private int quantity;
 }

@@ -41,11 +41,18 @@ public class OrderServiceEndToEndTest {
         wireMockServer.start();
 
         wireMockServer.stubFor(WireMock.post(urlEqualTo("/api/inventory/check"))
+                .withRequestBody(WireMock.containing("\"id\":1234"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\"available\": true}")));
 
+        wireMockServer.stubFor(WireMock.post(urlEqualTo("/api/inventory/check"))
+                .withRequestBody(WireMock.containing("\"id\":8888"))
+                .willReturn(WireMock.aResponse()
+                        .withStatus(400)  // For instance, HTTP 400 Bad Request
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{\"error\": \"Invalid orderId\"}")));
     }
 
     @AfterEach
@@ -56,7 +63,7 @@ public class OrderServiceEndToEndTest {
     @Test
     public void testOrderCreation_HappyPath() {
         Order testOrder = new Order();
-        testOrder.setId(1234L);
+        testOrder.setId(1234);
         testOrder.setItemName("Pencil");
         testOrder.setQuantity(2);
 
@@ -68,5 +75,22 @@ public class OrderServiceEndToEndTest {
                 .post("/api/orders")
                 .then()
                 .statusCode(201);
+    }
+
+    @Test
+    public void testOrderCreation_BadRequest() {
+        Order testOrder = new Order();
+        testOrder.setId(8888);
+        testOrder.setItemName("Book");
+        testOrder.setQuantity(1);
+
+        given()
+                .baseUri("http://localhost:" + port)
+                .body(testOrder)
+                .contentType("application/json")
+                .when()
+                .post("/api/orders")
+                .then()
+                .statusCode(400);
     }
 }

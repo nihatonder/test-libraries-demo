@@ -26,17 +26,17 @@ public class OrderService {
     }
 
     public ResponseEntity createOrder(Order order) {
-        boolean inventoryAvailable = checkInventory(order);
+        ResponseEntity response = checkInventory(order);
 
-        if (inventoryAvailable) {
+        if (response.getStatusCode().is2xxSuccessful()) {
             placeOrderInQueue(order);
-            return ResponseEntity.created(URI.create(order.getId().toString())).build();
+            return ResponseEntity.created(URI.create(String.valueOf(order.getId()))).build();
         } else {
-            throw new RuntimeException("Order cannot be placed due to insufficient inventory.");
+            return response;
         }
     }
 
-    private boolean checkInventory(Order order) {
+    private ResponseEntity checkInventory(Order order) {
         return inventoryServiceClient.checkInventory(order);
     }
 
