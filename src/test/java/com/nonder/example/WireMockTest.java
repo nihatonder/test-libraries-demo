@@ -22,6 +22,7 @@ public class WireMockTest {
 
     @BeforeEach
     public void setUp() {
+        // Start wiremock server
         wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(8081));
         wireMockServer.start();
 

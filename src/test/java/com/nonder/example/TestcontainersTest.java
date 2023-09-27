@@ -1,6 +1,5 @@
 package com.nonder.example;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,11 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 @SpringBootTest
-@org.testcontainers.junit.jupiter.Testcontainers
+@Testcontainers
 public class TestcontainersTest {
     private CachingConnectionFactory connectionFactory;
 
@@ -27,8 +27,6 @@ public class TestcontainersTest {
 
     @BeforeEach
     public void init() {
-        rabbitMQContainer.start();
-
         String address = rabbitMQContainer.getHost();
         Integer port = rabbitMQContainer.getFirstMappedPort();
 
