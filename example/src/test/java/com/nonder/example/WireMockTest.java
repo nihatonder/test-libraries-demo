@@ -4,9 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -16,10 +14,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @SpringBootTest
 public class WireMockTest {
 
-    private WireMockServer wireMockServer;
+    private static WireMockServer wireMockServer;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         // Start wiremock server
         wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(8081));
         wireMockServer.start();
@@ -32,8 +30,8 @@ public class WireMockTest {
                         .withBody("{\"id\": \"123\", \"name\": \"John Doe\", \"email\": \"john.doe@example.com\"}")));
     }
 
-    @AfterEach
-    public void tearDown() {
+    @AfterAll
+    public static void tearDown() {
         wireMockServer.stop();
     }
 

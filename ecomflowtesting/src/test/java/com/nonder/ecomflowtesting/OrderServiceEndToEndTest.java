@@ -5,10 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.nonder.ecomflowtesting.model.Order;
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,15 +29,18 @@ public class OrderServiceEndToEndTest {
     @Container
     static final GenericContainer rabbitMQContainer = new GenericContainer("rabbitmq:3-management")
             .withExposedPorts(5672);
-    protected WireMockServer wireMockServer;
+    private static WireMockServer wireMockServer;
+
     @Value("${order.queue.name}")
     private String orderQueueName;
+
     @LocalServerPort
     private int port;
-    private CachingConnectionFactory connectionFactory;
 
-    @BeforeEach
-    public void setUp() {
+    private static CachingConnectionFactory connectionFactory;
+
+    @BeforeAll
+    public static  void setUp() {
         // Connect to RabbitMQ
         String address = rabbitMQContainer.getHost();
         Integer port = rabbitMQContainer.getFirstMappedPort();
@@ -66,8 +66,8 @@ public class OrderServiceEndToEndTest {
                         .withBody("{\"error\": \"Invalid orderId\"}")));
     }
 
-    @AfterEach
-    public void tearDown() {
+    @AfterAll
+    public static void tearDown() {
         wireMockServer.stop();
     }
 
