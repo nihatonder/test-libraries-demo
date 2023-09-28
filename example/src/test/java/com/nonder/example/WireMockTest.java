@@ -3,6 +3,7 @@ package com.nonder.example;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @SpringBootTest
 public class WireMockTest {
@@ -53,9 +51,9 @@ public class WireMockTest {
         String responseBody = responseEntity.getBody();
         HttpStatusCode responseCode = responseEntity.getStatusCode();
 
-        assertEquals(HttpStatus.OK, responseCode);
+        Assert.assertEquals(HttpStatus.OK, responseCode);
 
-        assertNotNull(responseBody);
-        assertEquals("{\"id\": \"123\", \"name\": \"John Doe\", \"email\": \"john.doe@example.com\"}", responseBody);
+        Assert.assertNotNull(responseBody);
+        Assert.assertEquals("{\"id\": \"123\", \"name\": \"John Doe\", \"email\": \"john.doe@example.com\"}", responseBody);
     }
 }

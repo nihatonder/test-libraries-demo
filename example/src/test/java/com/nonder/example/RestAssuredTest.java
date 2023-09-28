@@ -1,12 +1,11 @@
 package com.nonder.example;
 
+import io.restassured.RestAssured;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -20,7 +19,7 @@ public class RestAssuredTest {
         String baseURL = "http://localhost:" + port;
         int movieId = 12345;
 
-        given()
+        RestAssured.given()
                 .baseUri(baseURL)
                 .header("Accept", "application/json")
                 .pathParam("id", movieId)
@@ -30,7 +29,7 @@ public class RestAssuredTest {
                 .then()
                 .assertThat()
                 .statusCode(200)
-                .body("title", equalTo("Inception"))
-                .body("director", equalTo("Christopher Nolan"));
+                .body("title", Matchers.equalTo("Inception"))
+                .body("director", Matchers.equalTo("Christopher Nolan"));
     }
 }
