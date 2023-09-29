@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	<modules>
-		<module>example</module>
-		<module>ecomflowtesting</module>
+		<module>examples</module>
+		<module>ecom-flow-testing</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>

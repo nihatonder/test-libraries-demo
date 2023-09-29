@@ -8,7 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ecomflowtesting</artifactId>
+    <artifactId>ecom-flow-testing</artifactId>
     <packaging>jar</packaging>
 
     <name>ecomflowtesting</name>
