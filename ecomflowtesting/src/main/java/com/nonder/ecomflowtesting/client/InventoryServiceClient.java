@@ -6,6 +6,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -26,11 +27,14 @@ public class InventoryServiceClient {
         this.webClient = webClientBuilder.baseUrl(inventoryServiceUrl).build();
     }
 
-    public ResponseEntity checkInventory(Order order) {
+    public ResponseEntity checkInventory(@RequestParam int id, @RequestParam int quantity) {
         try {
-            return webClient.post()
-                    .uri("/api/inventory/check")
-                    .bodyValue(order)
+            return webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/api/inventory/check")
+                            .queryParam("id", id)
+                            .queryParam("quantity", quantity)
+                            .build())
                     .retrieve()
                     .toEntity(InventoryResponse.class)
                     .block();

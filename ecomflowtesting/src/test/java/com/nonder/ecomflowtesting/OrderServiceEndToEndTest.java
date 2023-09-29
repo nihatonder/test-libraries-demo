@@ -5,7 +5,10 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.nonder.ecomflowtesting.model.Order;
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +20,10 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Map;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = RabbitMQContainerInitializer.class)
@@ -25,22 +32,22 @@ import org.testcontainers.junit.jupiter.Testcontainers;
         "spring.rabbitmq.username=guest",
         "spring.rabbitmq.password=guest",})
 public class OrderServiceEndToEndTest {
+    @LocalServerPort
+    private int port;
 
     @Container
     static final GenericContainer rabbitMQContainer = new GenericContainer("rabbitmq:3-management")
             .withExposedPorts(5672);
-    private static WireMockServer wireMockServer;
 
     @Value("${order.queue.name}")
     private String orderQueueName;
 
-    @LocalServerPort
-    private int port;
-
     private static CachingConnectionFactory connectionFactory;
 
+    private static WireMockServer wireMockServer;
+
     @BeforeAll
-    public static  void setUp() {
+    public static void setUp() {
         // Connect to RabbitMQ
         String address = rabbitMQContainer.getHost();
         Integer port = rabbitMQContainer.getFirstMappedPort();
@@ -51,15 +58,15 @@ public class OrderServiceEndToEndTest {
         wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(8081));
         wireMockServer.start();
 
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api/inventory/check"))
-                .withRequestBody(WireMock.containing("\"id\":1234"))
+        wireMockServer.stubFor(WireMock.get(urlPathEqualTo("/api/inventory/check"))
+                .withQueryParams(Map.of("id", WireMock.equalTo("1234"), "quantity", WireMock.equalTo("2")))
                 .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\"available\": true}")));
 
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api/inventory/check"))
-                .withRequestBody(WireMock.containing("\"id\":8888"))
+        wireMockServer.stubFor(WireMock.get(urlPathEqualTo("/api/inventory/check"))
+                .withQueryParams(Map.of("id", WireMock.equalTo("8888"), "quantity", WireMock.equalTo("1")))
                 .willReturn(WireMock.aResponse()
                         .withStatus(400)  // For instance, HTTP 400 Bad Request
                         .withHeader("Content-Type", "application/json")

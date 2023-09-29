@@ -19,11 +19,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest
 @Testcontainers
 public class TestcontainersTest {
-    private CachingConnectionFactory connectionFactory;
 
     @Container
     private GenericContainer rabbitMQContainer = new GenericContainer("rabbitmq:3-management")
             .withExposedPorts(5672);  // Port inside the container
+
+    private CachingConnectionFactory connectionFactory;
 
     @BeforeEach
     public void init() {

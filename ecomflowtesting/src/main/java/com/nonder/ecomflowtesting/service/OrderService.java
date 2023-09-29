@@ -37,7 +37,7 @@ public class OrderService {
     }
 
     private ResponseEntity checkInventory(Order order) {
-        return inventoryServiceClient.checkInventory(order);
+        return inventoryServiceClient.checkInventory(order.getId(), order.getQuantity());
     }
 
     private void placeOrderInQueue(Order order) {
